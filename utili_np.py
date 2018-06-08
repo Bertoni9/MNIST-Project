@@ -20,10 +20,10 @@ def load_MNIST_dataset(n_train, n_test):
         classes = [str(i) for i in range(Y_train_orig.shape[1])] #List of strings
     
     # 2) Printing an image
-    idx = 212
-    plt.imshow(X_train_orig[idx].reshape(28,28),cmap='binary')#to specify that I am working with black/white
-    #imshow accept 2D vectors or 3D vectors if the 3rd component is 3 or 4
-    print('y = ' + str(np.argmax(Y_train_orig[idx])))
+#    idx = 212
+#    plt.imshow(X_train_orig[idx].reshape(28,28),cmap='binary')#to specify that I am working with black/white
+#    #imshow accept 2D vectors or 3D vectors if the 3rd component is 3 or 4
+#    print('y = ' + str(np.argmax(Y_train_orig[idx])))
     
    #3) Standardize the format-------------------------------------------------
     X_train = X_train_orig[:n_train,:,:,:] 
@@ -67,14 +67,14 @@ def load_cats_dataset():
     #2) Decoding the names of the classes into strings and printing------------
     
     new_classes = [classes[i].decode("utf-8") for i in range(len(classes))]
-    #printing an example, i.e. an image and its class (cat or non cat)
     
-    index = 10
-    plt.imshow(X_train_orig[index])
-    print ("y = " + str(Y_train_orig[0,index]) + ". It's a " +   \
-           new_classes[Y_train_orig[0,index]] +  " picture.") #classes it's just cat or non-cat
-    
-    #3) Standardize the format------------------------------------------------
+    #3) printing an example, i.e. an image and its class (cat or non cat)
+#    index = 10
+#    plt.imshow(X_train_orig[index])
+#    print ("y = " + str(Y_train_orig[0,index]) + ". It's a " +   \
+#           new_classes[Y_train_orig[0,index]] +  " picture.") #classes it's just cat or non-cat
+#    
+    #4) Standardize the format------------------------------------------------
     
     X_train = X_train_orig[:n_train,:,:,:] 
     Y_train = Y_train_orig[:n_train,:]
@@ -233,8 +233,31 @@ def printing_mislabeled_images(X, Y, P, classes, num_images = 5):
             plt.title("Prediction: " + classes[int(P[0,idx])] + " \n Class: " \
                                                    + classes[int(Y_new[0,idx])])
             
-          
 
+
+def dataset_show(num_images = 8):
+    
+    X_train, Y_train, X_test, Y_test, classes = load_cats_dataset()
+    print("Binary Dataset: Cat vs Non Cat Classification")
+    plt.figure(1, figsize = (150.0/num_images, 150.0/num_images))
+    for i in range(num_images):
+        plt.subplot(1, num_images, i+1)
+        plt.imshow(X_train[:,i].reshape(64,64,3), interpolation='nearest')
+        plt.axis('off')
+        plt.title (classes[Y_train[0, i]] + "   (y = " + str(Y_train[0,i]) + ")")
+           #classes it's just cat or non-cat
+    plt.show()     
+    X_train, Y_train, X_test, Y_test, classes =  load_MNIST_dataset(1000, 100)
+    print("Multi-Class Dataset: MNIST")
+    plt.figure(2, figsize = (150.0/num_images, 150.0/num_images))
+    for i in range(num_images):
+        plt.subplot(1, num_images, i + 1)
+        plt.imshow(X_train[:,10+i].reshape(28,28),cmap='binary')
+        plt.axis('off')
+        mx = np.argmax(Y_train[:,10+i])
+        plt.title("y = " + str(mx))
+    plt.show()
+    
 if __name__ == "__main__":
     import doctest
     doctest.testmod() 
