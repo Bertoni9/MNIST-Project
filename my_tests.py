@@ -3,7 +3,7 @@ from IPython import get_ipython; get_ipython().magic('clear')
 import numpy as np; import tensorflow as tf; import matplotlib.pyplot as plt
 import pandas as pd; from utili_np import * ; from functions_NN import *
 """----------------------------------------------------------------------"""
-
+dataset_show()
 
 #X_train, Y_train, X_test, Y_test, classes = load_cats_dataset()
 #X_train, Y_train, X_test, Y_test, classes = load_MNIST_dataset()
