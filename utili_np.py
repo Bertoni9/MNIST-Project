@@ -10,7 +10,7 @@ def load_MNIST_dataset(n_train, n_test):
     and 4200 test images
     
     """
-    assert(n_train <= 15000 and n_test <= 1500)
+    assert(n_train <= 14000 and n_test <= 1400)
     # 1) Extracting the images from the dataset-------------------------------
     with h5py.File('datasets/MNIST_dataset_small.hdf5', 'r') as f_r:
         X_train_orig = np.array(f_r['training_set/X_train'][:])
