@@ -208,8 +208,8 @@ def printing_mislabeled_images(X, Y, P, classes, num_images = 5):
             idx = indici[i]
             plt.subplot(2, num_images, i + 1)
             plt.imshow(X[:,idx].reshape(64,64,3), interpolation='nearest')
-        plt.axis('off')
-        plt.title("Prediction: " + classes[int(P[0,idx])] + " \n Class: " + classes[Y[0,idx]])
+            plt.axis('off')
+            plt.title("Prediction: " + classes[int(P[0,idx])] + " \n Class: " + classes[Y[0,idx]])
     
     #Multiclass case
     else:
