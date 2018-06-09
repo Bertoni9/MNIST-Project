@@ -66,8 +66,9 @@ def initialize_params(nx, ny, hidden_layers, existing = "No"):
         L = len(layer_dims)
         for l in range(1,L):
             
-            #Random Initialization
-            params["W"+str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) / np.sqrt(layer_dims[l-1])#* 0.01
+            #Xavier Initialization
+            params["W"+str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) \
+            * np.sqrt(1/ layer_dims[l-1])#* 0.01
             params["b"+str(l)] = np.zeros((layer_dims[l], 1))
         
         assert(params['W'+str(l)].shape == (layer_dims[l], layer_dims[l-1]))
