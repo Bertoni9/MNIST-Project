@@ -1,10 +1,12 @@
 """Created on Tue Mar 13 14:26:37 2018 """
 import numpy as np
-import h5py
  
-def convert_to_one_hot(Y, C):
-   Y = np.eye(C)[Y.reshape(-1)].T #To be cleared this command
-   return Y
+def convert_to_one_hot(Y, C): #needed for binary classification
+    if C == 1:
+        C = 2
+        Y = np.eye(C)[Y.reshape(-1)].T
+    assert(Y.shape[0] == C)
+    return Y
 
 
 def random_mini_batches(X, Y, mb_size):

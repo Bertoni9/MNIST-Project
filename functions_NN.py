@@ -22,6 +22,7 @@ def softmax(Z):
     T = np.exp(Z - np.max(Z)) #np max is just a  trick for numerical stability, it cancels out
     sumt = np.sum(T, axis = 0, keepdims = True)
     A = T/sumt
+    assert(A.shape == Z.shape)
     return A
 
 def sigmoid_derivative(dA, Z):
@@ -37,8 +38,6 @@ def relu_derivative(dA, Z):
     assert (dZ.shape == Z.shape)
     return dZ
 
-#def softmax_derivative(dA, Z):
-#    return
 
 #%% Parameters Initialization
 def initialize_params(nx, ny, hidden_layers, existing = "No"):
@@ -101,7 +100,7 @@ def layer_FP(A_prev, W, b, activation):
     cache = (A_prev, W, b, Z)
     return A, cache
         
-def forward_prop(X, params):
+def forward_prop(X, params, flag = 0):
     """
     >>> X = np.array([[-1.02387576, 1.12397796],[-1.62328545, 0.64667545],[-1.74314104, -0.59664964]])
     >>> params = {'W1': np.array([[ 1.62434536, -0.61175641, -0.52817175],[-1.07296862,  0.86540763, -2.3015387 ]]), \
@@ -120,15 +119,19 @@ def forward_prop(X, params):
                                            activation = "relu")
             caches.append(cache)
         else:
-            A, cache = layer_FP(A_prev, params["W"+str(l)], params["b"+str(l)],
-                                           activation = "sigmoid")
+            if flag == 0:
+                A, cache = layer_FP(A_prev, params["W"+str(l)], params["b"+str(l)],
+                                               activation = "sigmoid")
+            else:
+                A, cache = layer_FP(A_prev, params["W"+str(l)], params["b"+str(l)],
+                                               activation = "softmax")
             caches.append(cache)
     
     
     return A, caches
 
 #%% Cost function
-def compute_cost(A, Y, params = [], lambd = 0):
+def compute_cost(A, Y, flag = 0):
     """
 #    >>> Y = np.asarray([[1, 1, 1]])
 #    >>> A = np.array([[.8,.9,0.4]])
@@ -136,14 +139,13 @@ def compute_cost(A, Y, params = [], lambd = 0):
 #    0.41493159961539694
     """
     m = Y.shape[1]
-    layers = len(params)//2
-    cost = -1/m * np.sum(Y*np.log(A) + (1-Y)*np.log(1-A))
-#    if lambd != 0:
-#        reg_cost = 0
-#        for l in range(layers):
-#            reg_cost += np.sum((params["W"+str(l+1)])**2)
-#        reg_cost = reg_cost*lambd/(2*m)
-#        cost = cost + reg_cost
+
+    if flag == 0: #Cross entropy loss for binary
+        cost = -1/m * np.sum(Y*np.log(A) + (1-Y)*np.log(1-A))
+        
+    else:#Cross entropy loss for multi-class
+        cost = -1/m * np.sum(Y*np.log(A))
+
     cost = np.squeeze(cost)
     assert(cost.shape == ())
     return cost
@@ -158,6 +160,8 @@ def layer_BP(dA, cache, activation):
         dZ = relu_derivative(dA, Z)
     elif activation == "sigmoid":
         dZ = sigmoid_derivative(dA, Z)
+    elif activation == "softmax":
+        dZ = dA
         
     m = A_prev.shape[1]
     dW = 1/m*np.dot(dZ, A_prev.T)
@@ -169,7 +173,7 @@ def layer_BP(dA, cache, activation):
     assert(db.shape == b.shape)
     return dA_prev, dW, db
     
-def backward_prop(A, Y, caches):
+def backward_prop(A, Y, caches, flag = 0):
     """ 
     Multi-layer Backprop. Tested with Gradient Checking
     >>> new_case = np.load("NN_example.npz")
@@ -189,14 +193,24 @@ def backward_prop(A, Y, caches):
     L = len(caches)
     m = A.shape[1]
     Y = Y.reshape(A.shape)
-    grads["dA"+str(L)] = - Y/A + (1-Y)/(1-A) #The first derivative: dJ/dA. I don't need J for that
+    if flag == 0:
+        grads["dA"+str(L)] = - Y/A + (1-Y)/(1-A) #dJ/dA for binary cross entropy
+    else:
+        grads["dA"+str(L)] = A - Y #This is already dZ
 
     for l in reversed(range(L)):
         cache = caches[l]
-        if l == L-1:
-            d_A_prev, dW, db = layer_BP(grads["dA"+str(l+1)], cache, "sigmoid")
-        else:
+        if l != L-1:
             d_A_prev, dW, db = layer_BP(grads["dA"+str(l+1)], cache, "relu")
+        
+        else:
+            if flag == 0:
+                d_A_prev, dW, db = layer_BP(grads["dA"+str(l+1)], cache, "sigmoid")
+            else:
+                d_A_prev, dW, db = layer_BP(grads["dA"+str(l+1)], cache, "softmax")
+            
+        
+        
         
         grads["dA"+str(l)], grads["dW"+str(l+1)], grads["db"+str(l+1)] = d_A_prev, dW, db
         #In case of 1 layer I compute cost as f(A1, Y) then I compute dA1 before
