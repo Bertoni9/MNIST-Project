@@ -3,7 +3,7 @@ import numpy as np
 import h5py
  
 def convert_to_one_hot(Y, C):
-   Y = np.eye(C)[Y.reshape(-1)] #To be cleared this command
+   Y = np.eye(C)[Y.reshape(-1)].T #To be cleared this command
    return Y
 
 
