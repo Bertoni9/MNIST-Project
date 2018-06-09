@@ -1,6 +1,6 @@
 # Neural-Networks-from-scratch
 
-This project aims to help machine learning practitioners to design and code a neural network from scratch (using only Numpy).
+This project aims to help machine learning practitioners to design and code a neural network from scratch in Python (using only Numpy).
 
 
 In the second part of the notebook the implementation is compared with the TensorFlow one. Apparently, without GPU support the Numpy version is way faster.
