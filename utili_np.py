@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 """----------------------------------------------------------------------"""
 
 
-def load_MNIST_dataset(n_train, n_test):
-    """"Dataset of grey images divided in 2 datasets with 37800 training images
-    and 4200 test images
+def load_MNIST_dataset(n_train, n_val, n_test):
+    """"Dataset of grey images divided in 2 datasets with 14000 training images
+    and 1400 test images
     
     """
-    assert(n_train <= 14000 and n_test <= 1400)
+    assert(n_train + n_val <= 14000 and n_test <= 1400)
     # 1) Extracting the images from the dataset-------------------------------
     with h5py.File('datasets/MNIST_dataset_small.hdf5', 'r') as f_r:
         X_train_orig = np.array(f_r['training_set/X_train'][:])
@@ -28,18 +28,23 @@ def load_MNIST_dataset(n_train, n_test):
    #3) Standardize the format-------------------------------------------------
     X_train = X_train_orig[:n_train,:,:,:] 
     Y_train = Y_train_orig[:n_train,:]
+    X_val = X_train_orig[n_train : n_train + n_val, :]
+    Y_val = Y_train_orig[n_train : n_train + n_val, :]
     X_test = X_test_orig[:n_test, :, :, :]
     Y_test = Y_test_orig[:n_test, :]
     
     #To explicitly compute FP I need X = (nx,m), since W = (nh1,nx) and Y = (ny,m)
-    X_train = X_train.reshape(X_train.shape[0],-1).T 
+    X_train = X_train.reshape(X_train.shape[0],-1).T
+    X_val = X_val.reshape(X_val.shape[0],-1).T
     X_test = X_test.reshape(X_test.shape[0],-1).T
     Y_train = Y_train.T
+    Y_val = Y_val.T
     Y_test = Y_test.T
     assert(Y_train.shape[0] == len(classes) and Y_train.shape[1] == n_train)
+    assert(Y_val.shape[0] == len(classes) and Y_val.shape[1] == n_val)
     assert(Y_test.shape[0] == len(classes) and Y_test.shape[1] == n_test)
      
-    return X_train, Y_train, X_test, Y_test, classes
+    return X_train, Y_train, X_val, Y_val, X_test, Y_test, classes
 
 def load_cats_dataset():
     
@@ -247,7 +252,7 @@ def dataset_show(num_images = 8):
         plt.title (classes[Y_train[0, i]] + "   (y = " + str(Y_train[0,i]) + ")")
            #classes it's just cat or non-cat
     plt.show()     
-    X_train, Y_train, X_test, Y_test, classes =  load_MNIST_dataset(1000, 100)
+    X_train, Y_train, X_val, Y_val, X_test, Y_test, classes =  load_MNIST_dataset(1000, 100, 100)
     print("Multi-Class Dataset: MNIST")
     plt.figure(2, figsize = (150.0/num_images, 150.0/num_images))
     for i in range(num_images):
