@@ -109,9 +109,8 @@ def dict_to_vector(params):
     >>> b2 = np.ones((2,1))*4
     >>> params = {'W2':W2,'b1':b1, 'W1':W1, 'b2':b2}
     >>> theta = dict_to_vector(params)
-    >>> theta.T
-    array([[ 1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  2.,  2.,  2.,  3.,
-             3.,  3.,  3.,  4.,  4.]])
+    >>> np.sum(theta)
+    35.0
     """
     #First I need to make sure to access the dictionary in the same order
     #Different names in case of grads or params. In case of grads I consider only dW and db
@@ -262,6 +261,28 @@ def dataset_show(num_images = 8):
         mx = np.argmax(Y_train[:,10+i])
         plt.title("y = " + str(mx))
     plt.show()
+    
+def random_mini_batches(X, Y, mb_size):
+    m = X.shape[1]#Attention if I am using CNN, X.shape[0]
+    mini_batches = []
+    permutation = list(np.random.permutation(m))
+    shuffled_X = X[:, permutation]
+    shuffled_Y = Y[:, permutation].reshape((Y.shape[0],m))
+    n_complete_mb = m//mb_size #the last one will be shorter
+    
+    for i in range(n_complete_mb):
+        mb_X = shuffled_X[:, i*mb_size : (i+1)*mb_size]
+        mb_Y = shuffled_Y[:, i*mb_size : (i+1)*mb_size]
+        mb_tuple = (mb_X, mb_Y)
+        mini_batches.append(mb_tuple) # a list of tuples
+        
+    if m % mb_size != 0:
+        mb_X = shuffled_X[:, m - mb_size*n_complete_mb : m]
+        mb_Y = shuffled_Y[:, m - mb_size*n_complete_mb : m]
+        mb_tuple = (mb_X, mb_Y)
+        mini_batches.append(mb_tuple)
+    
+    return mini_batches
     
 if __name__ == "__main__":
     import doctest
