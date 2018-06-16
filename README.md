@@ -3,7 +3,7 @@
 This project aims to help machine learning practitioners to design and code a neural network from scratch in Python (using only Numpy).
 
 
-In the second part of the notebook the implementation is compared with the TensorFlow one. Without GPU support the Numpy version is faster (about a factor of 2) using gradient descent and comparable using mini-batch gradient descent.
+In the second part of the notebook the implementation is compared with the TensorFlow one. Without GPU support the Numpy version is faster (about a factor of 2) than the TensorFlow one. The accuracy is comparable: 95% on test set in about one minute of training (without any hyperparameters tuning)
 
 
 The model presented is simple but it is quite generic and easy to understand and to customize. Any feedforward architecture can be chosen, both for binary and multi-class classification.
