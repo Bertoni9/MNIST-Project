@@ -8,9 +8,9 @@ def convert_to_one_hot(Y, C): #needed for binary classification
     assert(Y.shape[0] == C)
     return Y
 
-
 def random_mini_batches(X, Y, mb_size):
-    m = X.shape[1]#Attention if I am using CNN, X.shape[0]
+    m = X.shape[1]
+    assert(m > mb_size)
     mini_batches = []
     permutation = list(np.random.permutation(m))
     shuffled_X = X[:, permutation]
@@ -30,5 +30,3 @@ def random_mini_batches(X, Y, mb_size):
         mini_batches.append(mb_tuple)
     
     return mini_batches
-
-    
