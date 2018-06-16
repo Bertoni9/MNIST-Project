@@ -3,3 +3,9 @@ __pycache__/
 
 graphs/
 backup/
+
+functions_NN_test.py
+tests.py
+*.npz
+*.txt
+functions_NN_coursera.py
